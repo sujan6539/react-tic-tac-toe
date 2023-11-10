@@ -8,12 +8,21 @@ function App() {
   const [gameLog, setGameLog] = useState([]);
 
   function updateLog(subIndex, parentIndex) {
+    if (
+      gameLog.find(
+        (element) =>
+          element.gameboard.row == parentIndex &&
+          element.gameboard.col == subIndex
+      )
+    ) {
+      return;
+    }
     setPlayer((oldSymbol) => (oldSymbol === "X" ? "0" : "X"));
     setGameLog((oldLog) => {
-      let currentPlayer = "X"
+      let currentPlayer = "X";
 
-      if(oldLog.length>0 && oldLog[0].player == 'X'){
-        currentPlayer = '0'
+      if (oldLog.length > 0 && oldLog[0].player == "X") {
+        currentPlayer = "0";
       }
       const updated = [
         {
@@ -33,13 +42,9 @@ function App() {
           <Player name="player 1" symbol="X" isActive={player === "X"}></Player>
           <Player name="player 2" symbol="0" isActive={player === "0"}></Player>
         </ol>
-        <GameBoard
-          gameData={gameLog}
-          updateLog={updateLog}
-        />
-       
+        <GameBoard gameData={gameLog} updateLog={updateLog} />
       </div>
-       <Log id ="log" log={gameLog}/>
+      <Log id="log" log={gameLog} />
     </main>
   );
 }
