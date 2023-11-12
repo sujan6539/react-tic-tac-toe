@@ -2,12 +2,39 @@ import GameBoard from "./GameBoard";
 import Player from "./Player";
 import { useState } from "react";
 import Log from "./Log";
+import { WINNING_COMBINATIONS } from "./winning-combinations";
+import GameOver from "./GameOver";
+
+const initialGameBoard = [
+  [null, null, null],
+  [null, null, null],
+  [null, null, null],
+];
 
 function App() {
   const [player, setPlayer] = useState("X");
   const [gameLog, setGameLog] = useState([]);
 
-  function updateLog(subIndex, parentIndex) {
+    let gameBoard = [...initialGameBoard.map((innerarray)=>[...innerarray])]
+
+    for (const element of gameLog){
+        const {gameboard, player} = element
+        const {row, col} = gameboard
+        gameBoard[row][col] = player
+    }
+    const draw = gameLog.length === 9 
+  let playerWon 
+   for(const wincombs of WINNING_COMBINATIONS){
+      const firstCombination = gameBoard[wincombs[0].row][wincombs[0].column]
+      const secondCombination = gameBoard[wincombs[1].row][wincombs[1].column]
+      const thirdCombination = gameBoard[wincombs[2].row][wincombs[2].column]
+      if(firstCombination && firstCombination === secondCombination && firstCombination == thirdCombination){ 
+        playerWon = firstCombination
+        console.log(playerWon)
+      }
+    }
+
+  function updateState(subIndex, parentIndex) {
     if (
       gameLog.find(
         (element) =>
@@ -35,6 +62,9 @@ function App() {
     });
   }
 
+  function Restart(){
+    setGameLog([])
+  }
   return (
     <main>
       <div id="game-container">
@@ -42,7 +72,8 @@ function App() {
           <Player name="player 1" symbol="X" isActive={player === "X"}></Player>
           <Player name="player 2" symbol="0" isActive={player === "0"}></Player>
         </ol>
-        <GameBoard gameData={gameLog} updateLog={updateLog} />
+        {(playerWon || draw) && <GameOver symbol={playerWon} rematch={()=>Restart()}/>}
+        <GameBoard gameData={gameLog} updateLog={updateState} gameBoard={gameBoard}/>
       </div>
       <Log id="log" log={gameLog} />
     </main>

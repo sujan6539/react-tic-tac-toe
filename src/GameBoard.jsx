@@ -1,20 +1,9 @@
 import React from "react";
 import { useState } from "react";
 
-const initialGameBoard = [
-  [null, null, null],
-  [null, null, null],
-  [null, null, null],
-];
 
-const GameBoard = ({ gameData, updateLog}) => {
-    let gameBoard = initialGameBoard
 
-    for (const element of gameData){
-        const {gameboard, player} = element
-        const {row, col} = gameboard
-        gameBoard[row][col] = player
-    }
+const GameBoard = ({ gameData, updateLog, gameBoard}) => {
 
 //   const [gameBoard, setState] = useState(gameState);
 
