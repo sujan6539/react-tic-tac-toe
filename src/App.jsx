@@ -11,28 +11,38 @@ const initialGameBoard = [
   [null, null, null],
 ];
 
+const PLAYERS = {
+  X: "Player 1",
+  0: "Player 2",
+};
+
 function App() {
   const [player, setPlayer] = useState("X");
+  const [players, setPlayers] = useState(PLAYERS);
   const [gameLog, setGameLog] = useState([]);
 
-    let gameBoard = [...initialGameBoard.map((innerarray)=>[...innerarray])]
+  let gameBoard = [...initialGameBoard.map((innerarray) => [...innerarray])];
 
-    for (const element of gameLog){
-        const {gameboard, player} = element
-        const {row, col} = gameboard
-        gameBoard[row][col] = player
+  for (const element of gameLog) {
+    const { gameboard, player } = element;
+    const { row, col } = gameboard;
+    gameBoard[row][col] = player;
+  }
+  const draw = gameLog.length === 9;
+  let playerWon;
+  for (const wincombs of WINNING_COMBINATIONS) {
+    const firstCombination = gameBoard[wincombs[0].row][wincombs[0].column];
+    const secondCombination = gameBoard[wincombs[1].row][wincombs[1].column];
+    const thirdCombination = gameBoard[wincombs[2].row][wincombs[2].column];
+    if (
+      firstCombination &&
+      firstCombination === secondCombination &&
+      firstCombination == thirdCombination
+    ) {
+      playerWon = players[firstCombination];
+      console.log(playerWon);
     }
-    const draw = gameLog.length === 9 
-  let playerWon 
-   for(const wincombs of WINNING_COMBINATIONS){
-      const firstCombination = gameBoard[wincombs[0].row][wincombs[0].column]
-      const secondCombination = gameBoard[wincombs[1].row][wincombs[1].column]
-      const thirdCombination = gameBoard[wincombs[2].row][wincombs[2].column]
-      if(firstCombination && firstCombination === secondCombination && firstCombination == thirdCombination){ 
-        playerWon = firstCombination
-        console.log(playerWon)
-      }
-    }
+  }
 
   function updateState(subIndex, parentIndex) {
     if (
@@ -62,18 +72,44 @@ function App() {
     });
   }
 
-  function Restart(){
-    setGameLog([])
+  function Restart() {
+    setGameLog([]);
   }
+
+  function handlePlayerNameChange(symbol, name) {
+    setPlayers((oldPlayers) => {
+      return {
+        ...oldPlayers,
+        [symbol]: name,
+      };
+    });
+  }
+  
   return (
     <main>
       <div id="game-container">
         <ol id="players" className="highlight-player">
-          <Player name="player 1" symbol="X" isActive={player === "X"}></Player>
-          <Player name="player 2" symbol="0" isActive={player === "0"}></Player>
+          <Player
+            name="player 1"
+            symbol="X"
+            isActive={player === "X"}
+            handleNameChange={handlePlayerNameChange}
+          ></Player>
+          <Player
+            name="player 2"
+            symbol="0"
+            isActive={player === "0"}
+            handleNameChange={handlePlayerNameChange}
+          ></Player>
         </ol>
-        {(playerWon || draw) && <GameOver symbol={playerWon} rematch={()=>Restart()}/>}
-        <GameBoard gameData={gameLog} updateLog={updateState} gameBoard={gameBoard}/>
+        {(playerWon || draw) && (
+          <GameOver symbol={playerWon} rematch={() => Restart()} />
+        )}
+        <GameBoard
+          gameData={gameLog}
+          updateLog={updateState}
+          gameBoard={gameBoard}
+        />
       </div>
       <Log id="log" log={gameLog} />
     </main>

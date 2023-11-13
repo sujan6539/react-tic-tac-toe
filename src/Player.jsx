@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 
-const Player = ({ name, symbol, isActive }) => {
+const Player = ({ name, symbol, isActive, handleNameChange }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [playerName, setPlayerName] = useState(name);
 
@@ -9,14 +9,17 @@ const Player = ({ name, symbol, isActive }) => {
 
   function updateEditingState() {
     setIsEditing((oldEditingState) => !oldEditingState);
+    if (isEditing) {
+      console.log(`Editing complete ${symbol} : ${playerName}`)
+      handleNameChange(symbol, playerName);
+    }
   }
-
   function updateName(event) {
     setPlayerName(event.target.value);
   }
 
   return (
-    <li id="players" className={isActive?'active': undefined}>
+    <li id="players" className={isActive ? "active" : undefined}>
       {isEditing ? (
         <input type="text" defaultValue={name} onChange={updateName}></input>
       ) : (
